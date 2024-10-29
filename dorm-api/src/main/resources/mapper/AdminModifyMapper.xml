@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dorm.dao.mapper.AdminModifyMapper">
+  <resultMap id="BaseResultMap" type="com.dorm.dao.model.AdminModify">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="modify_id" jdbcType="INTEGER" property="modifyId" />
+    <result column="admin_id" jdbcType="INTEGER" property="adminId" />
+    <result column="employee_no" jdbcType="VARCHAR" property="employeeNo" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="pwd" jdbcType="VARCHAR" property="pwd" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="role" jdbcType="INTEGER" property="role" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="app_status" jdbcType="INTEGER" property="appStatus" />
+  </resultMap>
+</mapper>

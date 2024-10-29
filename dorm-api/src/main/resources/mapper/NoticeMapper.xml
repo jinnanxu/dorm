@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dorm.dao.mapper.NoticeMapper">
+  <resultMap id="BaseResultMap" type="com.dorm.dao.model.Notice">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="notice_id" jdbcType="INTEGER" property="noticeId" />
+    <result column="publish_time" jdbcType="TIMESTAMP" property="publishTime" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="tag" jdbcType="VARCHAR" property="tag" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+
+  <select id="selectNoticeList" resultMap="BaseResultMap">
+    select * from notice n order by n.publish_time desc limit #{start},#{end}
+  </select>
+</mapper>

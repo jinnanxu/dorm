@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dorm.dao.mapper.StudentMapper">
+  <resultMap id="BaseResultMap" type="com.dorm.dao.model.Student">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="student_no" jdbcType="VARCHAR" property="studentNo" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="grade" jdbcType="VARCHAR" property="grade" />
+    <result column="college" jdbcType="VARCHAR" property="college" />
+    <result column="major_class" jdbcType="VARCHAR" property="majorClass" />
+    <result column="open_id" jdbcType="VARCHAR" property="openId" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+
+  <select id="selectStudentById" resultMap="BaseResultMap">
+    select * from student s where s.student_id=#{studentId}
+  </select>
+
+  <select id="selectStudentList" resultMap="BaseResultMap">
+    select * from student s where 1=1
+    <if test="kw!=null and kw!=''">
+      s.mobile LIKE CONCAT('%',#{kw},'%')
+    </if>
+    order by s.student_id desc limit #{start},#{end}
+  </select>
+
+  <select id="selectStudentCount" resultType="java.lang.Integer">
+    select count(*) from student s where 1=1
+    <if test="kw!=null and kw!=''">
+      s.mobile LIKE CONCAT('%',#{kw},'%')
+    </if>
+  </select>
+
+  <!--各学院新生人数-->
+  <select id="selectNewStudentCount" resultType="java.util.Map">
+    SELECT COUNT(s.college) AS total, s.college AS college FROM student s WHERE s.grade='2023' GROUP BY s.college
+  </select>
+</mapper>

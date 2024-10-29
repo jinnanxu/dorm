@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dorm.dao.mapper.LeaveInfoMapper">
+  <resultMap id="BaseResultMap" type="com.dorm.dao.model.LeaveInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="leave_id" jdbcType="INTEGER" property="leaveId" />
+    <result column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="leave_type" jdbcType="INTEGER" property="leaveType" />
+    <result column="leave_time" jdbcType="VARCHAR" property="leaveTime" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
+    <result column="pics" jdbcType="VARCHAR" property="pics" />
+    <result column="dorm_id" jdbcType="INTEGER" property="dormId" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <association property="dorm" column="dorm_id" select="com.dorm.dao.mapper.DormitoryMapper.selectDormitoryById"/>
+    <association property="building" column="building_id" select="com.dorm.dao.mapper.BuildingMapper.selectBuildingById"/>
+  </resultMap>
+
+  <select id="selectMyLeaveList" resultMap="BaseResultMap">
+    select * from leave_info li where li.student_id=#{studentId} limit #{start},#{end}
+  </select>
+
+  <select id="selectMyLeaveCount" resultType="java.lang.Integer">
+    select COUNT(*) from leave_info li where li.student_id=#{studentId}
+  </select>
+
+  <select id="selectLeaveList" resultMap="BaseResultMap">
+    select * from leave_info li where li.building_id=#{buildingId} limit #{start},#{end}
+  </select>
+
+  <select id="selectLeaveCount" resultType="java.lang.Integer">
+    select COUNT(*) from leave_info li where li.building_id=#{buildingId}
+  </select>
+
+  <select id="selectLeaveStatistic" resultType="java.util.Map">
+    SELECT count(li.reason) total, li.reason reason FROM leave_info li where li.leave_type=1 GROUP BY li.reason;
+  </select>
+
+</mapper>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dorm.dao.mapper.FeeMapper">
+  <resultMap id="BaseResultMap" type="com.dorm.dao.model.Fee">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="fee_id" jdbcType="INTEGER" property="feeId" />
+    <result column="fee_type" jdbcType="INTEGER" property="feeType" />
+    <result column="bill_year" jdbcType="INTEGER" property="billYear" />
+    <result column="bill_month" jdbcType="INTEGER" property="billMonth" />
+    <result column="usages" jdbcType="DOUBLE" property="usages" />
+    <result column="unit_price" jdbcType="DOUBLE" property="unitPrice" />
+    <result column="amount" jdbcType="DOUBLE" property="amount" />
+    <result column="dorm_id" jdbcType="INTEGER" property="dormId" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+    <association property="dorm" column="dorm_id" select="com.dorm.dao.mapper.DormitoryMapper.selectDormitoryById"/>
+    <association property="building" column="building_id" select="com.dorm.dao.mapper.BuildingMapper.selectBuildingById"/>
+  </resultMap>
+  
+  <select id="selectFeeList" resultMap="BaseResultMap">
+    select * from fee f where 1=1
+    <if test="feeType!=null">
+      and f.fee_type=#{feeType}
+    </if>
+    <if test="dormId!=null">
+      and f.dorm_id =#{dormId}
+    </if>
+    <if test="buildingId!=null">
+      and f.building_id =#{buildingId}
+    </if>
+    <if test="status!=null and status!=''">
+      and f.status=#{status}
+    </if>
+    <if test="billYear0!=null and billYear0!=''">
+      and f.bill_year &gt;=#{billYear0} and f.bill_year &lt;=#{billYear1}
+    </if>
+    <if test="billMonth0!=null and billMonth0!=''">
+      and f.bill_month &gt;=#{billMonth0} and f.bill_month &lt;=#{billMonth1}
+    </if>
+    order by f.bill_year desc limit #{start},#{end}
+  </select>
+
+  <select id="selectFeeCount" resultType="java.lang.Integer">
+    select count(*) from fee f where 1=1
+    <if test="feeType!=null">
+      and f.fee_type=#{feeType}
+    </if>
+    <if test="dormId!=null">
+      and f.dorm_id =#{dormId}
+    </if>
+    <if test="buildingId!=null">
+      and f.building_id =#{buildingId}
+    </if>
+    <if test="status!=null and status!=''">
+      and f.status=#{status}
+    </if>
+    <if test="billYear0!=null and billYear0!=''">
+      and f.bill_year &gt;=#{billYear0} and f.bill_year &lt;=#{billYear1}
+    </if>
+    <if test="billMonth0!=null and billMonth0!=''">
+      and f.bill_month &gt;=#{billMonth0} and f.bill_month &lt;=#{billMonth1}
+    </if>
+  </select>
+
+  <select id="selectMyFeeList" resultMap="BaseResultMap">
+    select * from fee f where 1=1
+    <if test="feeType!=null">
+      and f.fee_type=#{feeType}
+    </if>
+    <if test="dormId!=null">
+      and f.dorm_id =#{dormId}
+    </if>
+    <if test="billYear0!=null and billYear0!=''">
+      and f.bill_year &gt;=#{billYear0} and f.bill_year &lt;=#{billYear1}
+    </if>
+    <if test="billMonth0!=null and billMonth0!=''">
+      and f.bill_month &gt;=#{billMonth0} and f.bill_month &lt;=#{billMonth1}
+    </if>
+    order by f.bill_year desc limit #{start},#{end}
+  </select>
+
+  <select id="selectMyFeeCount" resultType="java.lang.Integer">
+    select count(*) from fee f where 1=1
+    <if test="feeType!=null">
+      and f.fee_type=#{feeType}
+    </if>
+    <if test="dormId!=null">
+      and f.dorm_id =#{dormId}
+    </if>
+    <if test="billYear0!=null and billYear0!=''">
+      and f.bill_year &gt;=#{billYear0} and f.bill_year &lt;=#{billYear1}
+    </if>
+    <if test="billMonth0!=null and billMonth0!=''">
+      and f.bill_month &gt;=#{billMonth0} and f.bill_month &lt;=#{billMonth1}
+    </if>
+  </select>
+
+  <select id="selectMyWaitPayFeeCount" resultType="java.lang.Integer">
+    select count(*) from fee f where f.dorm_id =#{dormId} and f.status=0
+  </select>
+
+  <select id="selectAllWaitPayFeeCount" resultType="java.lang.Integer">
+    select count(*) from fee f where f.building_id = #{buildingId} and f.status=0
+  </select>
+
+  <select id="staticsFeeByBuilding" resultType="java.util.Map">
+    SELECT fee.bill_year AS billYear,fee.bill_month AS billMonth, sum(fee.usages) AS amount
+    FROM fee where fee.building_id = #{buildingId}
+    and fee.fee_type=#{feeType}
+    <if test="billYear0!=null and billYear0!=''">
+      and ((fee.bill_year=#{billYear0} and fee.bill_month &gt;=#{billMonth0} ) OR (fee.bill_year=#{billYear1} and fee.bill_month &lt;=#{billMonth1}))
+    </if>
+    GROUP BY fee.bill_month
+    ORDER BY fee.bill_year,fee.bill_month
+  </select>
+
+  <!--某个宿舍半年内的水电用量统计-->
+  <select id="staticsFeeByDorm" resultType="java.util.Map">
+    SELECT fee.bill_year AS billYear,fee.bill_month AS billMonth, sum(fee.amount) AS amount
+    FROM fee where fee.dorm_id = #{dormId}
+    and fee.fee_type=#{feeType}
+    GROUP BY fee.bill_month
+    ORDER BY fee.bill_year,fee.bill_month LIMIT 0,6
+  </select>
+  <select id="staticsUsageByDorm" resultType="java.util.Map">
+    SELECT fee.bill_year AS billYear,fee.bill_month AS billMonth, sum(fee.usages) AS amount
+    FROM fee where fee.dorm_id = #{dormId}
+    and fee.fee_type=#{feeType}
+    GROUP BY fee.bill_month
+    ORDER BY fee.bill_year,fee.bill_month LIMIT 0,6
+  </select>
+</mapper>

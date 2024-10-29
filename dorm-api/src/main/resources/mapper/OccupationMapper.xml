@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dorm.dao.mapper.OccupationMapper">
+  <resultMap id="BaseResultMap" type="com.dorm.dao.model.Occupation">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="occupation_id" jdbcType="INTEGER" property="occupationId" />
+    <result column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
+    <result column="check_in_time" jdbcType="TIMESTAMP" property="checkInTime" />
+    <result column="check_out_time" jdbcType="TIMESTAMP" property="checkOutTime" />
+    <result column="curr_status" jdbcType="INTEGER" property="currStatus" />
+    <result column="dorm_id" jdbcType="INTEGER" property="dormId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <association property="student" column="student_id" select="com.dorm.dao.mapper.StudentMapper.selectStudentById"/>
+    <association property="dorm" column="dorm_id" select="com.dorm.dao.mapper.DormitoryMapper.selectDormitoryById"/>
+    <association property="building" column="building_id" select="com.dorm.dao.mapper.BuildingMapper.selectBuildingById"/>
+  </resultMap>
+
+  <select id="selectOccupation" resultMap="BaseResultMap">
+    select * from occupation occ where 1=1
+    <if test="buildingId!=null">
+      and occ.building_id=#{buildingId}
+    </if>
+    <if test="dormId!=null">
+      and occ.dorm_id=#{dormId}
+    </if>
+    order by occ.occupation_id desc limit #{start},#{end}
+  </select>
+
+  <select id="selectOccupationCount" resultType="java.lang.Integer">
+    select count(*) from occupation occ where 1=1
+    <if test="buildingId!=null">
+      and occ.building_id=#{buildingId}
+    </if>
+    <if test="dormId!=null">
+      and occ.dorm_id=#{dormId}
+    </if>
+  </select>
+
+  <select id="selectExistOccupation" resultMap="BaseResultMap">
+    select * from occupation occ where occ.curr_status=1 and student_id=#{studentId}
+  </select>
+
+  <!--查询某栋宿舍的迁出总数-->
+  <select id="selectCheckOutCount" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM occupation occ
+    WHERE occ.building_id=#{buildingId} AND occ.curr_status=-1
+    AND occ.check_out_time BETWEEN #{d1} AND #{d2}
+  </select>
+
+  <!--查询某栋宿舍的迁入总数-->
+  <select id="selectCheckInCount" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM occupation occ
+    WHERE occ.building_id=#{buildingId} AND occ.curr_status=1
+    AND occ.check_in_time BETWEEN #{d1} AND #{d2}
+  </select>
+
+  <select id="selectBuildingOccCount" resultType="java.util.Map">
+    SELECT COUNT(*) AS total, b.building_name AS buildingName FROM occupation occ JOIN building b ON occ.building_id=b.building_id GROUP BY occ.building_id
+  </select>
+</mapper>

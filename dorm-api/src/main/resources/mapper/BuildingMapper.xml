@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dorm.dao.mapper.BuildingMapper">
+  <resultMap id="BaseResultMap" type="com.dorm.dao.model.Building">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="building_name" jdbcType="VARCHAR" property="buildingName" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="floor" jdbcType="VARCHAR" property="floor" />
+    <result column="romms_count" jdbcType="INTEGER" property="rommsCount" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+
+  <select id="selectBuildingById" resultMap="BaseResultMap">
+    select * from building b where b.building_id=#{buildingId}
+  </select>
+</mapper>

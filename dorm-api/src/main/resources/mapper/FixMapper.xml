@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dorm.dao.mapper.FixMapper">
+  <resultMap id="BaseResultMap" type="com.dorm.dao.model.Fix">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="fix_id" jdbcType="INTEGER" property="fixId" />
+    <result column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="dorm_id" jdbcType="INTEGER" property="dormId" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="worker_id" jdbcType="INTEGER" property="workerId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="fix_result" jdbcType="VARCHAR" property="fixResult" />
+    <result column="fixed_time" jdbcType="TIMESTAMP" property="fixedTime" />
+    <result column="confirm_pic" jdbcType="TIMESTAMP" property="confirmPic" />
+    <result column="pics" jdbcType="VARCHAR" property="pics" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <association property="dorm" column="dorm_id" select="com.dorm.dao.mapper.DormitoryMapper.selectDormitoryById"/>
+    <association property="building" column="building_id" select="com.dorm.dao.mapper.BuildingMapper.selectBuildingById"/>
+    <association property="worker" column="worker_id" select="com.dorm.dao.mapper.AdminMapper.selectAdminById"/>
+  </resultMap>
+
+  <select id="selectFixList" resultMap="BaseResultMap">
+    select * from fix f where 1=1
+    <if test="buildingId!=null and buildingId!=''">
+        and f.building_id = #{buildingId}
+    </if>
+    <if test="status!=null and status!=''">
+        and f.status=#{status}
+    </if>
+    order by f.create_time desc limit #{start},#{end}
+  </select>
+
+  <select id="selectFixCount" resultType="java.lang.Integer">
+    select count(*) from fix f where 1=1
+    <if test="buildingId!=null and buildingId!=''">
+      and f.building_id = #{buildingId}
+    </if>
+    <if test="status!=null and status!=''">
+      and f.status=#{status}
+    </if>
+  </select>
+
+  <select id="selectMyFixList" resultMap="BaseResultMap">
+    select * from fix f where f.student_id=#{studentId}
+    order by f.create_time desc limit #{start},#{end}
+  </select>
+
+  <select id="selectMyFixCount" resultType="java.lang.Integer">
+    select count(*) from fix f where f.student_id=#{studentId}
+  </select>
+
+  <select id="selectWaitFixCount" resultType="java.lang.Integer">
+    select count(*) from fix f where f.building_id = #{buildingId} and f.status=0
+  </select>
+
+</mapper>
